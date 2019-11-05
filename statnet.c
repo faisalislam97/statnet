@@ -110,7 +110,9 @@ int main(int argc,char *argv[])
 	}
 	
 	close(STDIN_FILENO);
+#ifndef DEBUGMODE
 	close(STDOUT_FILENO);
+#endif
 	close(STDERR_FILENO);
 	
 /*End of demonization*/
@@ -118,7 +120,12 @@ int main(int argc,char *argv[])
 	
 	
 
-
+	int db_open = sqlite3_open("/etc/amt-db.db",&db);
+	if (db_open != SQLITE_OK)
+	{
+		sqlite3_close(db);
+		exit(EXIT_FAILURE);
+	}
 /*setting up interrupt signal's mask. This will prevent the signal from stopping the program until the loop
 is completely executed*/
 	sigset_t intmask;//interrupt's mask

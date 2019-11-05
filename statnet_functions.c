@@ -37,6 +37,7 @@ void InterruptHandler(int signum)
 #ifdef DEBUGMODE
 	printf("Statnet Stopped");
 #endif
+	sqlite3_close(db);
 	exit(1);
 }
 
@@ -130,24 +131,13 @@ void LoadOffsets()
 
 	static char queryFormat[] = "SELECT IfaceID,rx,tx,tt FROM interfaces";
 
-	queryCheck = sqlite3_open("/etc/amt-db.db",&db);
-
-	if (queryCheck != SQLITE_OK )
-	{
-		sqlite3_close(db);
-//		SQLReport(1,__FUNCTION__,__LINE__);
-		return;
-	}
-
 	queryCheck = sqlite3_exec(db,queryFormat,fresult_loadoffsets,0,0);
 
 	if (queryCheck != SQLITE_OK )
 	{
-		sqlite3_close(db);
 //		SQLReport(2,__FUNCTION__,__LINE__);
 		return;
 	}
-	sqlite3_close(db);
 
 /*Informs us as to how many offsets were obtained from the database, in form of a list of IDs*/
 /*	if (offsets_count > 0)
@@ -249,28 +239,17 @@ int ifaceCheck(int i,int *result_checkif)
 	}
 	sql = realloc(sql,strlen(sql));
 
-	queryCheck = sqlite3_open("/etc/amt-db.db",&db);
-	if (queryCheck != SQLITE_OK)
-	{
-		sqlite3_close(db);
-		//SQLReport1,__FUNCTION__,__LINE__);
-		free(sql); sql = NULL;
-		return FAILURE;
-	}
-
 	queryCheck = sqlite3_exec(db,sql,fresult_checkif,result_checkif,NULL);
 
 	free(sql); sql = NULL;
 
 	if (queryCheck != SQLITE_OK)
 	{
-		sqlite3_close(db);
 		//SQLReport2,__FUNCTION__,__LINE__);
 		return FAILURE;
 	}
 	else
 	{
-		sqlite3_close(db);
 		//SQLReport5,interface_names[i],*result_checkif);
 		return SUCCESS;
 	}
@@ -323,26 +302,16 @@ int ifaceUpdate(int i, int offset_index)
 	}
 	sql = realloc(sql,strlen(sql));
 
-	/*connecting to the database*/
-	queryCheck = sqlite3_open("/etc/amt-db.db",&db);
-	if (queryCheck != SQLITE_OK)
-	{
-		sqlite3_close(db);
-		free(sql); sql = NULL;
-		return FAILURE;
-	}
 
 	/*Executing the query*/
 	queryCheck = sqlite3_exec(db,sql,0,0,NULL);
 	if (queryCheck != SQLITE_OK)
 	{
-		sqlite3_close(db);
 		free(sql); sql = NULL;
 		return FAILURE;
 	}
 
 	free(sql); sql = NULL;
-	sqlite3_close(db);
 
 	return SUCCESS;
 }
@@ -378,21 +347,11 @@ int ifaceInsert(int i)
 	}
 	sql = realloc(sql,strlen(sql));
 
-	/*connecting to the database*/
-	queryCheck = sqlite3_open("/etc/amt-db.db",&db);
-	if (queryCheck != SQLITE_OK)
-	{
-		sqlite3_close(db);
-		free(sql); sql = NULL;
-		return FAILURE;
-	}
-
 	/*Executing the query*/
 	queryCheck = sqlite3_exec(db,sql,0,0,NULL);
 	if (queryCheck != SQLITE_OK)
 	{
 		free(sql); sql = NULL;
-		sqlite3_close(db);
 		return FAILURE;
 	}
 
@@ -407,7 +366,6 @@ int ifaceInsert(int i)
 	if (queryCheck == 0)
 	{
 		free(sql); sql = NULL;
-		sqlite3_close(db);
 		return FAILURE;
 	}
 	sql = realloc(sql,strlen(sql));
@@ -418,12 +376,10 @@ int ifaceInsert(int i)
 	if (queryCheck != SQLITE_OK)
 	{
 		free(sql); sql = NULL;
-		sqlite3_close(db);
 		return FAILURE;
 	}
 	AddOffset(offset_ID,&bytes_in,&bytes_out,&bytes_total);
 
-	sqlite3_close(db);
 	free(sql); sql =NULL;
 	return SUCCESS;
 
