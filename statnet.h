@@ -63,6 +63,9 @@ void SaveBandwidth(const int i,const int type);
 /*saves bandwidths permanently in a log file*/
 void AppendLog(const int i);
 
+/*saves bandwidths pseudo-permanently in the database, for peak calculations*/
+void SaveBandwidthSQLite(const int i);
+
 /*handles interrupt given by the user. Ensures that memory is freeed before program exits*/
 void InterruptHandler(int signum);
 
