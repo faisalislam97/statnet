@@ -37,7 +37,6 @@ extern unsigned long *new_bytes_out;//storing the bytes out for second time
 extern double kbps_in;		//declared as such in order to append this data to the log file
 extern double kbps_out;		//declared as such in order to append this data to the log file
 
-
 extern sqlite3 *db;			//variable that holds the location of the database
 
 
