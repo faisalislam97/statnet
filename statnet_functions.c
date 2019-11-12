@@ -157,7 +157,7 @@ void SaveBandwidthSQLite(const int i)
 	strftime(date,sizeof(date),"%Y-%m-%d",obtained_time);//date obtained
 	strftime(cur_time,sizeof(cur_time),"%X",obtained_time);//time obtained
 
-	char queryForm[]="INSERT INTO hourly(Date,Time,Name,rx,tx)VALUES(\'%s\',\'%s\',\'%s\',%.2f,%.2f);";
+	char queryForm[]="INSERT INTO bandwidths(Date,Time,Name,rx,tx)VALUES(\'%s\',\'%s\',\'%s\',%.2f,%.2f);";
 
 	sql = calloc(SAVE_QUERY_SIZE,sizeof(char));
 
@@ -623,8 +623,9 @@ char *SetFileName(char *interface_name,const int type)
         filesize =strlen(directory)+strlen(interface_name)+strlen(appended)+1;
 
         filename=calloc(filesize,sizeof(char));//<directory><interface name><appended>\0
-	filename=strdup(directory);//adding directory to filename
+	strncpy(filename,directory,sizeof(directory));//adding directory to filename
         filename=strcat(filename,interface_name);//appending interface's name
+	filename=realloc(filename,filesize+1);
         filename=strcat(filename,appended);//appending the in/out type
 
         return filename;
