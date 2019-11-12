@@ -222,6 +222,7 @@ else
 		SaveBandwidth(i,OUT);
 		AppendLog(i);
 		SaveBytes(i);
+		SaveBandwidthSQLite(i);
 	}
 //	SaveBytes();
 sigprocmask(SIG_UNBLOCK,&intmask,NULL);

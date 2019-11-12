@@ -16,7 +16,7 @@ OBJ = $(patsubst %.c, %.o, $(SRC))
 
 statnet: $(OBJ)
 	$(CC) -o $@ $^ $(LDFLAGS)
-
+	rm *.o
 .PHONY: clean
 
 clean:

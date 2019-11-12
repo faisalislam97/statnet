@@ -21,6 +21,7 @@
 #define CHECK_IFACE_SIZE 142
 #define UPDATE_IFACE_SIZE 128
 #define OFFSET_QUERY_SIZE 76
+#define SAVE_QUERY_SIZE 123
 //#define DEBUGMODE
 //#define SAVE_BYTES_LOG
 
@@ -77,6 +78,49 @@ void AppendLog(const int i)
 
 }
 
+void SaveBandwidthSQLite(const int i)
+{
+	char *sql;
+	char date[11];
+	char cur_time[9];
+	time_t raw_time;
+	struct tm *obtained_time;
+	int query_check;
+
+	time(&raw_time);
+	obtained_time = localtime(&raw_time);
+
+	strftime(date,sizeof(date),"%Y-%m-%d",obtained_time);//date obtained
+	strftime(cur_time,sizeof(cur_time),"%X",obtained_time);//time obtained
+
+	char queryForm[]="INSERT INTO hourly(Date,Time,Name,rx,tx)VALUES(\'%s\',\'%s\',\'%s\',%.2f,%.2f);";
+
+	sql = calloc(SAVE_QUERY_SIZE,sizeof(char));
+
+	query_check = snprintf(sql,SAVE_QUERY_SIZE,queryForm,date,cur_time,interface_names[i],kbps_in,kbps_out);
+	if (query_check == 0)
+	{
+		//SQLReport4,__FUNCTION__,__LINE__);
+		free(sql); sql = NULL;
+		return;
+	}
+
+	sql = realloc(sql,strlen(sql)+1);
+
+	query_check = SQLITE_BUSY;
+	while (query_check == SQLITE_BUSY)
+		query_check = sqlite3_exec(db,sql,0,0,0);
+	if (query_check != SQLITE_OK)
+	{
+		free(sql);
+		sql = NULL;
+		return;
+	}
+	free(sql);
+	sql = NULL;
+}
+
+
 /*void SQLReport(const int i, const char *function_name,const signed int line)
 {
 
@@ -131,7 +175,9 @@ void LoadOffsets()
 
 	static char queryFormat[] = "SELECT IfaceID,rx,tx,tt FROM interfaces";
 
-	queryCheck = sqlite3_exec(db,queryFormat,fresult_loadoffsets,0,0);
+	queryCheck = SQLITE_BUSY;
+	while (queryCheck == SQLITE_BUSY)
+		queryCheck = sqlite3_exec(db,queryFormat,fresult_loadoffsets,0,0);
 
 	if (queryCheck != SQLITE_OK )
 	{
@@ -239,7 +285,9 @@ int ifaceCheck(int i,int *result_checkif)
 	}
 	sql = realloc(sql,strlen(sql));
 
-	queryCheck = sqlite3_exec(db,sql,fresult_checkif,result_checkif,NULL);
+	queryCheck = SQLITE_BUSY;
+	while (queryCheck == SQLITE_BUSY)
+		queryCheck = sqlite3_exec(db,sql,fresult_checkif,result_checkif,NULL);
 
 	free(sql); sql = NULL;
 
@@ -304,7 +352,9 @@ int ifaceUpdate(int i, int offset_index)
 
 
 	/*Executing the query*/
-	queryCheck = sqlite3_exec(db,sql,0,0,NULL);
+	queryCheck = SQLITE_BUSY;
+	while (queryCheck == SQLITE_BUSY)
+		queryCheck = sqlite3_exec(db,sql,0,0,NULL);
 	if (queryCheck != SQLITE_OK)
 	{
 		free(sql); sql = NULL;
@@ -348,7 +398,9 @@ int ifaceInsert(int i)
 	sql = realloc(sql,strlen(sql));
 
 	/*Executing the query*/
-	queryCheck = sqlite3_exec(db,sql,0,0,NULL);
+	queryCheck = SQLITE_BUSY;
+	while (queryCheck == SQLITE_BUSY)
+		queryCheck = sqlite3_exec(db,sql,0,0,NULL);
 	if (queryCheck != SQLITE_OK)
 	{
 		free(sql); sql = NULL;
@@ -372,7 +424,9 @@ int ifaceInsert(int i)
 	//SQLReport0,__FUNCTION__,__LINE__);
 
 	int offset_ID;
-	queryCheck = sqlite3_exec(db,sql,fresult_offsetID,&offset_ID,0);
+	queryCheck = SQLITE_BUSY;
+	while (queryCheck == SQLITE_BUSY)
+		queryCheck = sqlite3_exec(db,sql,fresult_offsetID,&offset_ID,0);
 	if (queryCheck != SQLITE_OK)
 	{
 		free(sql); sql = NULL;
