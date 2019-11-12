@@ -3,6 +3,8 @@
 #define NETSTAT_H
 #include "sqlite3.h"
 
+void Demonize();
+
 extern struct timeval beginning,ending;//for updating times
 
 extern int first_delay;//this will allow us to keep first delay's behavior different from the rest

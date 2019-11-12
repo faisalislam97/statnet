@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include <time.h>
 
@@ -32,6 +33,69 @@
 
 int result_ifcheck;		//result of checkif in a global variable
 
+void Demonize()
+{
+/*Start of demonization*/
+        pid_t pid,sid;
+        char PIDFILE[]="/var/run/statnet.pid";
+
+        pid = fork();
+
+        if (pid < 0)
+        {
+#ifdef DEBUGMODE
+                printf("Error in obtaining pid");
+#endif
+                exit(EXIT_FAILURE);
+        }
+
+        if (pid > 0)
+        {
+                exit(EXIT_SUCCESS);
+        }
+
+        umask(0);
+
+        sid = setsid();
+        if (sid < 0)
+        {
+#ifdef DEBUGMODE
+                printf("Error in setting sid");
+#endif
+                exit(EXIT_FAILURE);
+        }
+
+        FILE *pid_write;
+        if( (pid_write=fopen(PIDFILE,"w")) == NULL)
+        {
+#ifdef DEBUGMODE
+                printf("Error in opening file for writing pid");
+#endif
+                exit(EXIT_FAILURE);
+        }
+        fprintf(pid_write,"%i",sid);
+        fclose(pid_write);
+        pid_write = NULL;
+
+        if ( (chdir("/"))<0)
+        {
+#ifdef DEBUGMODE
+                printf("Error in changing directory to root");
+#endif
+                exit(EXIT_FAILURE);
+        }
+
+        close(STDIN_FILENO);
+#ifndef DEBUGMODE
+      close(STDOUT_FILENO);
+#endif
+        close(STDERR_FILENO);
+
+/*End of demonization*/
+
+}
+
+
 void InterruptHandler(int signum)
 {
         FreeMemory2();
@@ -47,7 +111,7 @@ void AppendLog(const int i)
 	/*Declaration of variables*/
 	FILE *log_pointer;
 
-	char log_name[18];
+	char log_name[24];
 	char cur_time[9];
 
 	time_t raw_time;
@@ -57,7 +121,7 @@ void AppendLog(const int i)
 	/*Filename creation*/
 	time(&raw_time);
 	obtained_time = localtime(&raw_time);
-	strftime(log_name,sizeof(log_name),"/etc/%Y%m%d.log",obtained_time);
+	strftime(log_name,sizeof(log_name),"/etc/stats/%Y%m%d.log",obtained_time);
 
 
 
@@ -491,7 +555,7 @@ void SaveBandwidth(const int i,const int type) {
 #ifdef DEBUGMODE
 		printf("Error in creating %s bandwidth file\n",inout);
 #endif
-		free(filename);
+//		free(filename);
 		return;
 	}
 
@@ -502,7 +566,7 @@ void SaveBandwidth(const int i,const int type) {
 		printf("Error in opening %s bandwidth file\n",inout);
 #endif
 
-		fclose(file);
+//		fclose(file);
 		free(filename);
 		return;
 	}
@@ -546,7 +610,7 @@ double Bandwidth(const unsigned long old_bytes,const unsigned long new_bytes,str
 char *SetFileName(char *interface_name,const int type)
 {
 
-	char directory[] ="/tmp/";
+	char directory[] ="/tmp/stats/";
         char appended[5];
         if(type == IN)
                 strcpy(appended,"_in");
