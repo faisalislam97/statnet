@@ -1,2 +1,2 @@
-59 * * * * /bin/hourPeak.sh
-59 12 * * * /bin/dayPeak.sh
+59 * * * * /usr/bin/hourPeak
+59 12 * * * /usr/bin/dayPeak
