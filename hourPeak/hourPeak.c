@@ -40,13 +40,21 @@ int main(int argc,char *argv[])
 	char logName[26];
 
 	char hour[3];
-
+	int hour_i; 		//to reduce the hour obtained by one
 	/* Obtaining time and applying it to required places */
 	time(&raw_time);
 	obtained_time = localtime(&raw_time);
 	strftime(logName,sizeof(logName),"/etc/stats/%Y%m%d_h.log",obtained_time);
 	strftime(hour,sizeof(hour),"%H",obtained_time);
 
+	hour_i = atoi(hour);
+	hour_i--;
+	hour_i = snprintf(hour,sizeof(hour),"%i",hour_i);
+	if (hour_i == 0)
+	{
+		sqlite3_close(db);
+		return 1;
+	}
 //	strcpy(hour,argv[1]);
 
 	if_count = 0;
@@ -63,7 +71,6 @@ int main(int argc,char *argv[])
 		db = NULL;
 		return 1;
 	}
-
 	/* Forming query for obtaining the peaks */
 	char extractQuery[]="SELECT Name,max(rx),max(tx)FROM bandwidths WHERE Time LIKE \'%s%%\' GROUP BY Name HAVING Time LIKE \'%s%%\';";
 	sql = calloc(EXTRACT_QUERY_SIZE,sizeof(char));
