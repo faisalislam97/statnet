@@ -11,7 +11,7 @@ int main()
 
 //	char sql[BUFF_SIZE];
 
-	int rc = sqlite3_open("/etc/amt-db.db",&db);
+	int rc = sqlite3_open("/etc/fuse-db.db",&db);
 
 	if ( rc != SQLITE_OK)
 	{
@@ -34,9 +34,9 @@ int main()
 	"rx DOUBLE NOT NULL,tx DOUBLE NOT NULL);"
 	"CREATE INDEX IF NOT EXISTS bandwidths_index ON bandwidths(Date,Time,Name);"
 	"CREATE INDEX IF NOT EXISTS hour_index ON hourPeak(Name);"
-	"CREATE TABLE IF NOT EXISTS dayPeak(Date TEXT NOT NULL,Name TEXT NOT NULL,"
-	"rx DOUBLE NOT NULL, tx DOUBLE NOT NULL);"
-	"CREATE INDEX IF NOT EXISTS day_index ON dayPeak(Date,Name);"
+//	"CREATE TABLE IF NOT EXISTS dayPeak(Date TEXT NOT NULL,Name TEXT NOT NULL,"
+//	"rx DOUBLE NOT NULL, tx DOUBLE NOT NULL);"
+//	"CREATE INDEX IF NOT EXISTS day_index ON dayPeak(Date,Name);"
 	"COMMIT;";
 	rc = SQLITE_BUSY;
 	while (rc == SQLITE_BUSY)

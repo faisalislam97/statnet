@@ -1,0 +1,7 @@
+SELECT Name,max(rx),max(tx)FROM hourPeak GROUP BY Name
+SELECT Name,max(rx),max(tx)FROM hourPeak GROUP BY Name
+Save peaks of 4 interfaces
+SELECT Name,max(rx),max(tx)FROM hourPeak GROUP BY Name
+Save peaks of 4 interfaces
+SELECT Name,max(rx),max(tx)FROM hourPeak GROUP BY Name
+Save peaks of 4 interfaces

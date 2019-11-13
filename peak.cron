@@ -1,0 +1,2 @@
+59 * * * * sudo /home/faisal/hourPeak/hourPeak.sh
+59 12 * * * sudo /home/faisal/dayPeak/dayPeak.sh

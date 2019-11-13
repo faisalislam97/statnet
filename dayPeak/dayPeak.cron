@@ -1,0 +1,1 @@
+0 12 * * * sudo /home/faisal/dayPeak/dayPeak.sh >> results
