@@ -86,9 +86,7 @@ void Demonize()
         }
 
         close(STDIN_FILENO);
-#ifndef DEBUGMODE
-      close(STDOUT_FILENO);
-#endif
+	close(STDOUT_FILENO);
         close(STDERR_FILENO);
 
 /*End of demonization*/
