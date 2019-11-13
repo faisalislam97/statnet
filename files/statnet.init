@@ -19,6 +19,8 @@ SERVICE_FILE="/usr/sbin/statnet"
 # This variable defines the location of the file run at initialization
 ADD_FILE="/usr/bin/InitDatabase"
 
+# This variable defines the location of the file loaded to cron
+CRON_FILE="/etc/stats/peak.cron"
 start_service()
 {
 	procd_open_instance
@@ -30,11 +32,15 @@ start_service()
 	procd_open_instance
 	procd_set_param command "$ADD_FILE"
 	procd_close_instance
+
+	crontab "$CRON_FILE"
+
 }
 
 stop_service()
 {
 	if [ -e "$PIDFILE" ]; then
 		kill -2 ` cat $PIDFILE`
+		rm $PIDFILE
 	fi
 }
