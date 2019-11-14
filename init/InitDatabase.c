@@ -11,7 +11,7 @@ int main()
 
 //	char sql[BUFF_SIZE];
 
-	int rc = sqlite3_open("/etc/fuse-db.db",&db);
+	int rc = sqlite3_open("/etc/fuse.db",&db);
 
 	if ( rc != SQLITE_OK)
 	{
