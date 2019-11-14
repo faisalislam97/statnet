@@ -1,7 +1,7 @@
 all: hourPeak
 
 CC = gcc
-CFLAGS = -g -Wall
+CFLAGS = -Wall
 LDFLAGS = -lpthread -ldl
 
 DEPS = $(wildcard *.h)
@@ -15,7 +15,7 @@ OBJ = $(patsubst %.c, %.o, $(SRC))
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 hourPeak: $(OBJ)
-	$(CC) -g -o $@ $^ $(LDFLAGS)
+	$(CC) -o $@ $^ $(LDFLAGS)
 	rm *.o
 .PHONY: clean
 

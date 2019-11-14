@@ -700,9 +700,9 @@ int FileParser(const char *file,const int set)
 
 
 	//to reallcc these variables later on
-	interface_names = calloc(1,sizeof(char *));//to make use of realloc in the loop
+	interface_names = calloc(1,sizeof(char *));
 	bytes_in = calloc(1,sizeof(unsigned long ));
-	bytes_out = calloc(1,sizeof(unsigned long ));
+	bytes_out =calloc(1,sizeof(unsigned long ));
 
 
 

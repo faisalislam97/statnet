@@ -22,6 +22,20 @@ int if_count;		//number of interfaces
 
 int f_Extract(void *,int,char **,char **);
 
+void free_if_list()
+{
+	if (if_list != NULL)
+	{
+		for (int i = 0; i < if_count; i++)
+		{
+			if (if_list[i].name != NULL)
+				free(if_list[i].name);
+		}
+		free(if_list);
+	}
+
+}
+
 int main(int argc,char *argv[])
 {
 
@@ -62,6 +76,7 @@ int main(int argc,char *argv[])
 	if (query_check != SQLITE_OK)
 	{
 		sqlite3_close(db);
+		free_if_list();
 		db = NULL;
 		return 1;
 	}
@@ -73,6 +88,7 @@ int main(int argc,char *argv[])
 	if (query_check == 0)
 	{
 		printf("Query not formed\n");
+		free_if_list();
 		return 1;
 	}
 		printf("%s\n",sql);
@@ -87,6 +103,7 @@ int main(int argc,char *argv[])
 		free(sql);
 		printf("%s\n",sqlite3_errmsg(db));
 		sqlite3_close(db);
+		free_if_list();
 		return 1;
 	}
 	free(sql);
@@ -98,6 +115,7 @@ int main(int argc,char *argv[])
 	{
 		printf("not opening file\n");
 		sqlite3_close(db);
+		free_if_list();
 		return 1;
 	}
 
@@ -140,17 +158,9 @@ int main(int argc,char *argv[])
 	}
 */
 /* End of program */
-	if (if_list != NULL)
-	{
-		for (int i = 0; i < if_count; i++)
-		{
-			if (if_list[i].name != NULL)
-				free(if_list[i].name);
-		}
-		free(if_list);
-	}
 
 	sqlite3_close(db);
+	free_if_list();
 	return 0;
 }
 
