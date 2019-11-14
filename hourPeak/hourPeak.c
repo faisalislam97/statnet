@@ -89,9 +89,9 @@ int main(int argc,char *argv[])
 		return 1;
 	}
 	/* Forming query for obtaining the peaks */
-	char extractQuery[]="SELECT Name,max(rx),max(tx)FROM bandwidths WHERE Date = '%s' AND Time LIKE \'%s%%\' GROUP BY Name HAVING Time LIKE \'%%%s%%\';";
+	char extractQuery[]="SELECT Name,max(rx),max(tx)FROM bandwidths WHERE Date = '%s' GROUP BY Name HAVING Time LIKE \'%%%s%%\';";
 	sql = calloc(EXTRACT_QUERY_SIZE,sizeof(char));
-	query_check = snprintf(sql,EXTRACT_QUERY_SIZE,extractQuery,date,hour,hour);
+	query_check = snprintf(sql,EXTRACT_QUERY_SIZE,extractQuery,date,hour);
 	if (query_check == 0)
 	{
 		printf("Query not formed\n");
