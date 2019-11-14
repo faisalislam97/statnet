@@ -80,7 +80,7 @@ int main(int argc,char *argv[])
 	/* Opening database connection */
 	query_check = SQLITE_BUSY;
 	while(query_check == SQLITE_BUSY)
-		query_check = sqlite3_open("/etc/fuse-db.db",&db);
+		query_check = sqlite3_open("/etc/fuse.db",&db);
 	if (query_check != SQLITE_OK)
 	{
 		sqlite3_close(db);
