@@ -1,0 +1,2 @@
+0 * * * * /usr/bin/hourPeak
+0 0 * * * /usr/bin/dayPeak

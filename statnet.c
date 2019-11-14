@@ -57,9 +57,9 @@ sqlite3 *db; //the SQLite Database
 int main(int argc,char *argv[])
 {
 
-//	Demonize();
+	Demonize();
 
-	int db_open = sqlite3_open("/etc/fuse-db.db",&db);
+	int db_open = sqlite3_open("/etc/fuse.db",&db);
 	if (db_open != SQLITE_OK)
 	{
 		sqlite3_close(db);

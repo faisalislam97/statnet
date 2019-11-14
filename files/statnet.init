@@ -20,7 +20,7 @@ SERVICE_FILE="/usr/sbin/statnet"
 ADD_FILE="/usr/bin/InitDatabase"
 
 # This variable defines the location of the file loaded to cron
-CRON_FILE="/etc/stats/peak.cron"
+CRON_FILE="/etc/stats/statnet.cron"
 start_service()
 {
 	procd_open_instance

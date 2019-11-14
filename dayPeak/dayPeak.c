@@ -7,7 +7,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <time.h>
-#define EXTRACT_QUERY_SIZE 95
+#define EXTRACT_QUERY_SIZE 122
 #define SAVE_QUERY_SIZE 101
 				//				|
 struct iface
@@ -57,12 +57,29 @@ int main(int argc,char *argv[])
 
 	char date[12];
 
+	char day[3];
+	int day_i;		/* reducing the day part of date
+				by one, so that the peak is taken
+				from data of an entire day */
 	/* Obtaining time and applying it to required places */
 	time(&raw_time);
 	obtained_time = localtime(&raw_time);
 	strftime(logName,sizeof(logName),"/etc/stats/%Y_dpeaks.log",obtained_time);
-	strftime(date,sizeof(date),"%Y-%m-%d",obtained_time);
+	strftime(date,sizeof(date),"%Y-%m-",obtained_time);
 
+	strftime(day,sizeof(day),"%d",obtained_time);
+	day_i = atoi(day);
+	day_i--;
+{
+	int day_check;
+	day_check = snprintf(day,sizeof(day),"%i",day_i);
+	if (day_check == 0)
+	{
+		return 1;
+	}
+
+	strncat(date,day,sizeof(day)-1);
+}
 //	strcpy(hour,argv[1]);
 
 	if_count = 0;
@@ -82,7 +99,7 @@ int main(int argc,char *argv[])
 	}
 
 	/* Forming query for obtaining the peaks */
-	char extractQuery[]="SELECT Name,max(rx),max(tx)FROM hourPeak GROUP BY Name";
+	char extractQuery[]="SELECT Name,max(rx),max(tx)FROM hourPeak GROUP BY Name HAVING Date ='%s'";
 	sql = calloc(EXTRACT_QUERY_SIZE,sizeof(char));
 	query_check = snprintf(sql,EXTRACT_QUERY_SIZE,extractQuery,date);
 	if (query_check == 0)

@@ -5,8 +5,8 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <time.h>
-#define EXTRACT_QUERY_SIZE 110
-#define SAVE_QUERY_SIZE 101
+#define EXTRACT_QUERY_SIZE 130
+#define SAVE_QUERY_SIZE 120
 				//				|
 struct iface
 {
@@ -52,6 +52,7 @@ int main(int argc,char *argv[])
 	time_t raw_time;
 	struct tm *obtained_time;
 
+	char date[12];
 	char logName[26];
 
 	char hour[3];
@@ -59,6 +60,7 @@ int main(int argc,char *argv[])
 	/* Obtaining time and applying it to required places */
 	time(&raw_time);
 	obtained_time = localtime(&raw_time);
+	strftime(date,sizeof(date),"%Y-%m-%d",obtained_time);
 	strftime(logName,sizeof(logName),"/etc/stats/%Y%m%d_h.log",obtained_time);
 	strftime(hour,sizeof(hour),"%H",obtained_time);
 
@@ -87,9 +89,9 @@ int main(int argc,char *argv[])
 		return 1;
 	}
 	/* Forming query for obtaining the peaks */
-	char extractQuery[]="SELECT Name,max(rx),max(tx)FROM bandwidths WHERE Time LIKE \'%s%%\' GROUP BY Name HAVING Time LIKE \'%s%%\';";
+	char extractQuery[]="SELECT Name,max(rx),max(tx)FROM bandwidths WHERE Date = '%s' AND Time LIKE \'%s%%\' GROUP BY Name HAVING Time LIKE \'%s%%\';";
 	sql = calloc(EXTRACT_QUERY_SIZE,sizeof(char));
-	query_check = snprintf(sql,EXTRACT_QUERY_SIZE,extractQuery,hour,hour);
+	query_check = snprintf(sql,EXTRACT_QUERY_SIZE,extractQuery,date,hour,hour);
 	if (query_check == 0)
 	{
 		printf("Query not formed\n");
@@ -134,7 +136,7 @@ int main(int argc,char *argv[])
 	for (int i = 0; i < if_count; i++)
 	{
 		/* Creating query for saving peaks in the database */
-		char saveQuery[] = "INSERT INTO hourPeak(Time,Name,rx,tx)VALUES(\'%s\',\'%s\',%.2f,%.2f);";
+		char saveQuery[] = "INSERT INTO hourPeak(Date,Time,Name,rx,tx)VALUES(\'%s\',\'%s\',\'%s\',%.2f,%.2f);";
 		sql = calloc(SAVE_QUERY_SIZE,sizeof(char));
 		query_check = snprintf(sql,SAVE_QUERY_SIZE,saveQuery,hour,if_list[i].name,if_list[i].rx,if_list[i].tx);
 		if (query_check == 0)

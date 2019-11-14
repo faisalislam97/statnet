@@ -1,2 +1,0 @@
-59 * * * * /usr/bin/hourPeak
-59 12 * * * /usr/bin/dayPeak
