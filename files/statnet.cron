@@ -1,2 +1,3 @@
 0 * * * * /usr/bin/hourPeak
 0 0 * * * /usr/bin/dayPeak
+0 0 * * * /usr/bin/statnet_gzip

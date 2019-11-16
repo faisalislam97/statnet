@@ -1,0 +1,12 @@
+#! /bin/sh
+n=`ls -1 /etc/stats | grep "[0-9]\+.log$" | wc -l`
+i=0
+for f in `ls -1 /etc/stats| grep "[0-9]\+.log$" `
+do
+	i=`expr $i + 1`
+	if [ $i -eq $n ]
+	then
+		continue
+	fi
+	`gzip /etc/stats/"$f"`
+done

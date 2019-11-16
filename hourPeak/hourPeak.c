@@ -66,7 +66,7 @@ int main(int argc,char *argv[])
 
 	hour_i = atoi(hour);
 	hour_i--;
-	if (hour_i > 10)
+	if (hour_i >= 10)
 		hour_i = snprintf(hour,sizeof(hour),"%i",hour_i);
 	else
 		hour_i = snprintf(hour,sizeof(hour),"0%i",hour_i);
@@ -95,7 +95,7 @@ int main(int argc,char *argv[])
 	/* Forming query for obtaining the peaks */
 	char extractQuery[]="SELECT Name,max(rx),max(tx)FROM bandwidths WHERE Time LIKE \'%s%%\' AND Date = '%s' GROUP BY Name HAVING Time LIKE \'%s%%\';";
 	sql = calloc(EXTRACT_QUERY_SIZE,sizeof(char));
-	query_check = snprintf(sql,EXTRACT_QUERY_SIZE,extractQuery,date,hour);
+	query_check = snprintf(sql,EXTRACT_QUERY_SIZE,extractQuery,hour,date,hour);
 	if (query_check == 0)
 	{
 		printf("Query not formed\n");
