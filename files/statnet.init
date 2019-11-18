@@ -23,12 +23,15 @@ ADD_FILE="/usr/bin/InitDatabase"
 CRON_FILE="/etc/stats/statnet.cron"
 start_service()
 {
+# Firstly, create the stats folder in the var directory
+	mkdir /var/stats
+# Secondly, run the program
 	procd_open_instance
 	procd_set_param command "$SERVICE_FILE"
 	procd_set_param stdout 1
 	procd_set_param stderr 1
 	procd_close_instance
-
+# Thirdly, load the required cron jobs
 	procd_open_instance
 	procd_set_param command "$ADD_FILE"
 	procd_close_instance
@@ -39,8 +42,10 @@ start_service()
 
 stop_service()
 {
+# If a PID file exists, then it should kill the program using the PID.
 	if [ -e "$PIDFILE" ]; then
 		kill -2 ` cat $PIDFILE`
+# Remove the file so that it may not be abused
 		rm $PIDFILE
 	fi
 }
